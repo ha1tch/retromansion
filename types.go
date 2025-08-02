@@ -111,6 +111,9 @@ type FilmationGame struct {
 
 	AssetPath string
 
+	// Music support - this is the key addition
+	BackgroundMusic rl.Music
+
 	RenderOrder []RenderItem
 
 	GameTime   float32

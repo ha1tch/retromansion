@@ -225,6 +225,10 @@ func main() {
 	rl.InitWindow(screenWidth, screenHeight, "RETROMANSION")
 	rl.SetTargetFPS(60)
 
+	// Initialize audio system for music support
+	rl.InitAudioDevice()
+	defer rl.CloseAudioDevice()
+
 	game := FilmationGame{
 		Scale:     54,
 		ScreenW:   screenWidth,
@@ -235,9 +239,17 @@ func main() {
 	err := game.LoadSprites()
 	if err != nil {
 		fmt.Printf("Failed to load sprites: %v\n", err)
-
 		rl.CloseWindow()
 		return
+	}
+
+	// Load and start background music
+	err = game.LoadMusic()
+	if err != nil {
+		fmt.Printf("Failed to load music: %v\n", err)
+		// Continue without music - it's optional
+	} else {
+		game.StartMusic()
 	}
 
 	game.BuildSampleRooms()
@@ -246,6 +258,9 @@ func main() {
 	fmt.Println("World ready!")
 
 	for !rl.WindowShouldClose() {
+		// Update music stream each frame
+		game.UpdateMusic()
+		
 		game.Update()
 		game.Render()
 	}

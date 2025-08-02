@@ -94,6 +94,35 @@ func (fg *FilmationGame) LoadSprites() error {
 	return nil
 }
 
+func (fg *FilmationGame) LoadMusic() error {
+	fmt.Println("Loading background music...")
+	
+	// Use consistent path structure like sprites do
+	musicPath := filepath.Join("./game_assets", "music", "retromansion.wav")
+	fg.BackgroundMusic = rl.LoadMusicStream(musicPath)
+	
+	if fg.BackgroundMusic.Stream.SampleRate == 0 {
+		return fmt.Errorf("failed to load music: %s", musicPath)
+	}
+	
+	fmt.Printf("  Loaded: %s\n", musicPath)
+	return nil
+}
+
+func (fg *FilmationGame) StartMusic() {
+	if fg.BackgroundMusic.Stream.SampleRate > 0 {
+		rl.PlayMusicStream(fg.BackgroundMusic)
+		fg.BackgroundMusic.Looping = true
+		fmt.Println("Background music started")
+	}
+}
+
+func (fg *FilmationGame) UpdateMusic() {
+	if fg.BackgroundMusic.Stream.SampleRate > 0 {
+		rl.UpdateMusicStream(fg.BackgroundMusic)
+	}
+}
+
 func (fg *FilmationGame) CleanupSprites() {
 	fmt.Println("Unloading sprites...")
 
@@ -115,4 +144,11 @@ func (fg *FilmationGame) CleanupSprites() {
 	rl.UnloadTexture(fg.Sprites.CeilingTile)
 
 	fmt.Println("All sprites unloaded")
+}
+
+func (fg *FilmationGame) CleanupAudio() {
+	if fg.BackgroundMusic.Stream.SampleRate > 0 {
+		rl.UnloadMusicStream(fg.BackgroundMusic)
+		fmt.Println("Background music unloaded")
+	}
 }
