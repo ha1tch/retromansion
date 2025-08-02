@@ -17,7 +17,9 @@ go run .
 - [Raylib-go](https://github.com/gen2brain/raylib-go)
 
 ## Contact
+
 Email: h@ual.fi
+
 https://oldbytes.space/@haitchfive
 
 ## License
