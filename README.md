@@ -2,6 +2,8 @@
 
 A 3D isometric tile-based game engine written in Go using Raylib. Features room-based world generation, sprite rendering, and classic adventure game mechanics.
 
+https://raw.githubusercontent.com/ha1tch/retromansion/refs/heads/main/img/retromansion.gif
+
 ## Quick Start
 
 ```bash
