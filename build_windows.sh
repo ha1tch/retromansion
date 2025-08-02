@@ -1,20 +1,21 @@
-# This builds natively for whatever host platform you're on
-# In my case, that's MacOS, so we don't need to use any
-# special tools, other than the Go compiler. 
-# Apple's XCode command tools are probably required though.
+# This script assumes a MacOS host and that the mingw32 compiler is available
+# You can use this script to build Windows binaries from Mac
 
 BUILDDIR=build
-BINARY=retromansion_macos
+BINARY=retromansion.exe
 TARGETBIN=$BUILDDIR/$BINARY
 
 mkdir -p $BUILDDIR
 
-go install ./...
+export CGO_ENABLED=1
+export GOOS=windows
+export GOARCH=amd64
+export CC=x86_64-w64-mingw32-gcc
+export CXX=x86_64-w64-mingw32-g++
 
 # go build -o $BUILDDIR/debug_$BINARY.exe game.go assets.go types.go render.go world.go rooms.go
-  
+
 go build -ldflags="-s -w" -o $TARGETBIN game.go assets.go types.go render.go world.go rooms.go
-  
 
 ls -al $TARGETBIN
 file $TARGETBIN
