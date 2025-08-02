@@ -1,0 +1,40 @@
+# RETROMANSION Sprite Manifest
+
+[Floor Tiles]
+0=stone
+1=wood
+2=grass
+3=sand
+
+[Wall Tiles]
+0=stone
+1=brick
+2=wood
+3=metal
+
+[Special Tiles]
+0=pillar
+1=stairs
+2=door_closed
+3=door_open
+4=ceiling
+
+[Player Sprites]
+0=down
+1=left
+2=up
+3=right
+
+[Item Sprites]
+0=key
+1=gem
+2=potion
+3=sword
+4=shield
+5=food
+
+[Enemy Sprites]
+0=goblin
+1=orc
+2=troll
+3=skeleton
