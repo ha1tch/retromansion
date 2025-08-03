@@ -21,7 +21,7 @@ echo "Building macOS app bundle..."
 
 # Clean previous builds
 rm -rf "$APPBUNDLE"
-rm -f "$BUILDDIR/retromansion-macos.zip"
+rm -f "$BUILDDIR/retromansion-macos.dmg"
 
 # Create build directory
 mkdir -p "$BUILDDIR"
@@ -232,11 +232,33 @@ echo "Icon file exists: $([ -f "$APPBUNDLE/Contents/Resources/icon.icns" ] && ec
 echo "Info.plist exists: $([ -f "$APPBUNDLE/Contents/Info.plist" ] && echo "✅" || echo "❌")"
 echo "Game assets symlink: $([ -L "$APPBUNDLE/Contents/MacOS/game_assets" ] && echo "✅" || echo "❌")"
 
-# Create distribution zip
-echo "Creating distribution zip..."
-cd "$BUILDDIR"
-zip -r "retromansion-macos.zip" "$APPNAME.app"
-cd ..
+# Create distribution DMG
+echo "Creating distribution DMG..."
+DMG_NAME="retromansion-macos.dmg"
+DMG_TEMP_DIR="retromansion_dmg"
+
+# Clean up any old DMG folders and files
+rm -rf "$DMG_TEMP_DIR"
+rm -f "$BUILDDIR/$DMG_NAME"
+mkdir "$DMG_TEMP_DIR"
+
+# Copy the .app bundle into the temporary folder
+cp -R "$APPBUNDLE" "$DMG_TEMP_DIR/"
+
+# Create the DMG
+hdiutil create -volname "Retromansion" \
+  -srcfolder "$DMG_TEMP_DIR" \
+  -ov -format UDZO "$BUILDDIR/$DMG_NAME" >/dev/null 2>&1
+
+# Clean up temporary folder
+rm -rf "$DMG_TEMP_DIR"
+
+if [ -f "$BUILDDIR/$DMG_NAME" ]; then
+    echo "✅ DMG created successfully"
+else
+    echo "❌ DMG creation failed"
+    exit 1
+fi
 
 # Clean up temporary files
 if [ -f "$ICON_NAME.icns" ]; then
@@ -249,24 +271,25 @@ echo "✅ macOS app bundle created successfully!"
 echo ""
 echo "Build Summary:"
 echo "   App Bundle: $APPBUNDLE"
-echo "   Distribution: $BUILDDIR/retromansion-macos.zip"
+echo "   Distribution: $BUILDDIR/retromansion-macos.dmg"
 echo ""
 
 # Show file details
 echo "File Details:"
 ls -lh "$APPBUNDLE"
-if [ -f "$BUILDDIR/retromansion-macos.zip" ]; then
-    echo "ZIP Size: $(du -h $BUILDDIR/retromansion-macos.zip | cut -f1)"
+if [ -f "$BUILDDIR/retromansion-macos.dmg" ]; then
+    echo "DMG Size: $(du -h $BUILDDIR/retromansion-macos.dmg | cut -f1)"
 fi
 
 echo ""
 echo "Ready for distribution!"
 echo ""
 echo "User Installation Instructions:"
-echo "   1. Download retromansion-macos.zip"
-echo "   2. Unzip the file"
-echo "   3. Double-click Retromansion.app to run"
-echo "   4. If blocked: Right-click → 'Open' → 'Open'"
+echo "   1. Download retromansion-macos.dmg"
+echo "   2. Double-click to mount the disk image"
+echo "   3. Drag Retromansion.app to Applications folder (or anywhere)"
+echo "   4. Double-click Retromansion.app to run"
+echo "   5. If blocked: Right-click → 'Open' → 'Open'"
 echo ""
 echo "The app is ad-hoc signed and should run without issues on the same machine."
 echo "For distribution to other machines, users may need to right-click → Open on first run."
